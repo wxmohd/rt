@@ -42,12 +42,12 @@ fn main() {
     
     let mut scene = Scene::new();
     
-    // Set up camera
+    // Set up camera - simpler setup
     let camera = Camera::new(
-        Vec3::new(0.0, 0.0, 5.0),  // position
-        Vec3::new(0.0, 0.0, 0.0),  // look_at
+        Vec3::new(0.0, 0.0, 0.0),  // position at origin
+        Vec3::new(0.0, 0.0, -1.0), // look down negative z
         Vec3::new(0.0, 1.0, 0.0),  // up
-        45.0,                       // fov
+        90.0,                      // wider fov
         args.width as f64 / args.height as f64, // aspect ratio
     );
     scene.set_camera(camera);
@@ -83,7 +83,7 @@ fn create_sphere_scene(scene: &mut Scene) {
     );
     
     scene.add_object(Box::new(Sphere::new(
-        Vec3::new(0.0, 0.0, -1.0), // Move sphere in front of camera
+        Vec3::new(0.0, 0.0, -2.0), // Place sphere further away
         1.0,
         material,
     )));
