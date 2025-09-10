@@ -19,7 +19,7 @@ impl Scene {
             objects: Vec::new(),
             lights: Vec::new(),
             camera: None,
-            background_color: Vec3::new(0.2, 0.3, 0.5), // Sky blue
+            background_color: Vec3::new(0.7, 0.8, 1.0), // Light sky blue
         }
     }
     
@@ -54,7 +54,10 @@ impl Scene {
         let width = image.width;
         let height = image.height;
         
-        let pixels: Vec<Vec3> = (0..height).into_par_iter().flat_map(|j| {
+        let pixels: Vec<Vec3> = (0..height).into_par_iter().enumerate().flat_map(|(row_idx, j)| {
+            if row_idx % 10 == 0 {
+                eprintln!("\rScanlines remaining: {}", height as usize - row_idx - 1);
+            }
             (0..width).into_par_iter().map(move |i| {
                 let u = i as f64 / (width - 1) as f64;
                 let v = (height - 1 - j) as f64 / (height - 1) as f64;
@@ -69,6 +72,8 @@ impl Scene {
             let y = i / width as usize;
             image.set_pixel(x, y, pixel);
         }
+        
+        eprintln!("\nDone.");
     }
     
     fn ray_color(&self, ray: &Ray, depth: i32, enable_reflection: bool) -> Vec3 {

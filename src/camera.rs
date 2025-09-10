@@ -20,15 +20,15 @@ pub struct Camera {
 impl Camera {
     pub fn new(position: Vec3, look_at: Vec3, up: Vec3, fov: f64, aspect_ratio: f64) -> Self {
         let theta = fov.to_radians();
-        let half_height = (theta / 2.0).tan();
-        let half_width = aspect_ratio * half_height;
+        let viewport_height = 2.0 * (theta / 2.0).tan();
+        let viewport_width = aspect_ratio * viewport_height;
         
         let w = (position - look_at).normalize();
         let u = up.cross(&w).normalize();
         let v = w.cross(&u);
         
-        let horizontal = u * half_width * 2.0;
-        let vertical = v * half_height * 2.0;
+        let horizontal = u * viewport_width;
+        let vertical = v * viewport_height;
         let lower_left_corner = position - horizontal / 2.0 - vertical / 2.0 - w;
         
         Camera {
@@ -47,8 +47,7 @@ impl Camera {
     }
     
     pub fn get_ray(&self, s: f64, t: f64) -> Ray {
-        let target = self.lower_left_corner + self.horizontal * s + self.vertical * t;
-        let direction = target - self.position;
+        let direction = self.lower_left_corner + self.horizontal * s + self.vertical * t - self.position;
         Ray::new(self.position, direction)
     }
 }
