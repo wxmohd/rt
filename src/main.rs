@@ -42,21 +42,21 @@ fn main() {
     
     let mut scene = Scene::new();
     
-    // Set up camera for proper perspective
+    // Set up camera for proper perspective with wider field of view
     let camera = Camera::new(
-        Vec3::new(0.0, 0.0, 0.0),  // camera at origin
-        Vec3::new(0.0, 0.0, -1.0), // looking down negative z
+        Vec3::new(0.0, 1.0, 2.0),  // camera positioned back and slightly up
+        Vec3::new(0.0, 0.0, -4.0), // looking at objects
         Vec3::new(0.0, 1.0, 0.0),  // up vector
-        45.0,                      // field of view
+        60.0,                      // wider field of view for better framing
         args.width as f64 / args.height as f64, // aspect ratio
     );
     scene.set_camera(camera);
     
-    // Add lighting
+    // Add lighting - positioned to better illuminate objects
     scene.add_light(Light::new(
-        Vec3::new(5.0, 5.0, 5.0),
+        Vec3::new(2.0, 3.0, 1.0), // Light positioned above and to the side
         Vec3::new(1.0, 1.0, 1.0),
-        1.0,
+        0.8, // Slightly reduced intensity for better contrast
     ));
     
     // Create scenes based on argument
@@ -77,35 +77,35 @@ fn main() {
 }
 
 fn create_sphere_scene(scene: &mut Scene) {
-    // Simple red sphere - test basic rendering
+    // Scene 1: A scene with a sphere
     let sphere_material = Material::new(
         Vec3::new(0.8, 0.2, 0.2), // bright red
         0.2, 0.8, 0.3, 100.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Sphere::new(
-        Vec3::new(0.0, 0.0, -5.0), // Place sphere in front of camera
-        2.0,                       // Large sphere
+        Vec3::new(0.0, 0.0, -5.0), // Positioned for full visibility
+        1.5,                       // Appropriate size for 800x600
         sphere_material,
     )));
 }
 
 fn create_plane_cube_scene(scene: &mut Scene) {
-    // Lower brightness lighting as required
+    // Scene 2: A scene with a flat plane and a cube with lower brightness
     scene.lights.clear();
     scene.add_light(Light::new(
-        Vec3::new(5.0, 5.0, 5.0),
-        Vec3::new(0.3, 0.3, 0.3), // dimmer light than sphere scene
-        0.3,
+        Vec3::new(3.0, 4.0, 2.0),
+        Vec3::new(0.4, 0.4, 0.4), // Lower brightness than sphere scene
+        0.4,
     ));
     
     let plane_material = Material::new(
-        Vec3::new(0.9, 0.8, 0.95), // light lavender
-        0.3, 0.8, 0.3, 200.0, 0.0, 0.0, 1.0
+        Vec3::new(0.6, 0.6, 0.6), // gray plane
+        0.2, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
     );
     
     let cube_material = Material::new(
-        Vec3::new(0.7, 0.9, 1.0), // light blue
-        0.3, 0.8, 0.4, 200.0, 0.0, 0.0, 1.0
+        Vec3::new(0.2, 0.8, 0.2), // green cube
+        0.2, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     
     scene.add_object(Box::new(Plane::new(
@@ -115,13 +115,15 @@ fn create_plane_cube_scene(scene: &mut Scene) {
     )));
     
     scene.add_object(Box::new(Cube::new(
-        Vec3::new(0.0, 0.0, -5.0),
-        1.0,
+        Vec3::new(0.0, -1.0, -5.0),
+        1.5,
         cube_material,
     )));
 }
 
 fn create_all_objects_scene(scene: &mut Scene) {
+    // Scene 3: All objects (sphere, cube, cylinder, plane)
+    
     // Ground plane
     let plane_material = Material::new(
         Vec3::new(0.5, 0.5, 0.5), // gray
@@ -133,49 +135,49 @@ fn create_all_objects_scene(scene: &mut Scene) {
         plane_material,
     )));
     
-    // Sphere
+    // Sphere (red) - left side
     let sphere_material = Material::new(
         Vec3::new(0.8, 0.2, 0.2), // red
-        0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
+        0.1, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Sphere::new(
-        Vec3::new(-2.0, 0.0, -5.0),
+        Vec3::new(-3.0, -1.0, -6.0),
         1.0,
         sphere_material,
     )));
     
-    // Cube
+    // Cube (green) - right side
     let cube_material = Material::new(
         Vec3::new(0.2, 0.8, 0.2), // green
-        0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
+        0.1, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Cube::new(
-        Vec3::new(2.0, 0.0, -5.0),
-        1.0,
+        Vec3::new(3.0, -1.0, -6.0),
+        1.5,
         cube_material,
     )));
     
-    // Cylinder
+    // Cylinder (blue) - center back
     let cylinder_material = Material::new(
         Vec3::new(0.2, 0.2, 0.8), // blue
-        0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
+        0.1, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Cylinder::new(
-        Vec3::new(0.0, 0.0, -7.0),
-        0.5,
+        Vec3::new(0.0, -1.0, -8.0),
+        0.8,
         2.0,
         cylinder_material,
     )));
 }
 
 fn create_different_perspective_scene(scene: &mut Scene) {
-    // Change camera position for different perspective
+    // Scene 4: Same as scene 3 but with different camera perspective
     let camera = Camera::new(
-        Vec3::new(-3.0, 3.0, 2.0),  // different elevated position
-        Vec3::new(0.0, 0.0, -5.0),  // looking at the objects
+        Vec3::new(-5.0, 3.0, 0.0),  // elevated side position for better view
+        Vec3::new(0.0, -1.0, -7.0), // looking at the center of objects
         Vec3::new(0.0, 1.0, 0.0),   // up
-        45.0,                       // fov
-        800.0 / 600.0,              // aspect ratio
+        65.0,                       // wider fov for full visibility
+        800.0 / 600.0,              // aspect ratio for 800x600
     );
     scene.set_camera(camera);
     
@@ -191,36 +193,36 @@ fn create_different_perspective_scene(scene: &mut Scene) {
         plane_material,
     )));
     
-    // Sphere
+    // Sphere (red) - left side
     let sphere_material = Material::new(
         Vec3::new(0.8, 0.2, 0.2), // red
-        0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
+        0.1, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Sphere::new(
-        Vec3::new(-2.0, 0.0, -5.0),
+        Vec3::new(-3.0, -1.0, -6.0),
         1.0,
         sphere_material,
     )));
     
-    // Cube
+    // Cube (green) - right side
     let cube_material = Material::new(
         Vec3::new(0.2, 0.8, 0.2), // green
-        0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
+        0.1, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Cube::new(
-        Vec3::new(2.0, 0.0, -5.0),
-        1.0,
+        Vec3::new(3.0, -1.0, -6.0),
+        1.5,
         cube_material,
     )));
     
-    // Cylinder
+    // Cylinder (blue) - center back
     let cylinder_material = Material::new(
         Vec3::new(0.2, 0.2, 0.8), // blue
-        0.1, 0.7, 0.2, 200.0, 0.0, 0.0, 1.0
+        0.1, 0.7, 0.3, 200.0, 0.0, 0.0, 1.0
     );
     scene.add_object(Box::new(Cylinder::new(
-        Vec3::new(0.0, 0.0, -7.0),
-        0.5,
+        Vec3::new(0.0, -1.0, -8.0),
+        0.8,
         2.0,
         cylinder_material,
     )));
